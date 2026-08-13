@@ -18,6 +18,7 @@ frontend/.vite/
 .settings/
 .classpath
 .project
+.claude/
 
 ## OS
 .DS_Store
