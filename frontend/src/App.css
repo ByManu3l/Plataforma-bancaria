@@ -1,0 +1,138 @@
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+.app-header h1 {
+  margin-bottom: 0.15rem;
+}
+
+.app-header p {
+  margin-top: 0;
+  color: var(--color-text-muted);
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 0.6rem 0.2rem;
+}
+
+.tab:hover {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+.tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-card h3 {
+  margin-top: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.form-grid label,
+.form-card > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.error-banner {
+  background: #fdecea;
+  color: var(--color-danger);
+  border: 1px solid #f5c6c1;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-banner button {
+  background: transparent;
+  color: var(--color-danger);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.3rem;
+}
+
+.success-message {
+  background: #e7f6ec;
+  color: #1e6b3a;
+  border: 1px solid #bfe6cc;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+
+.transacciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.transacciones-grid .form-card {
+  margin-bottom: 0;
+}
+
+.estado-cuenta {
+  margin-top: 2rem;
+}
+
+.estado-cuenta > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 320px;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
