@@ -157,6 +157,69 @@ class ReglasDeNegocioComponentTest {
                 .andExpect(jsonPath("$[0].id").exists());
     }
 
+    /**
+     * Requisito opcional del enunciado: el correo debe tener formato xxxx@xxxxx.xxx.
+     */
+    @Test
+    void correoConFormatoInvalido_deberiaRechazarse() throws Exception {
+        for (String correoInvalido : new String[]{"sin-arroba", "sin@dominio", "sin@punto,com", "@example.com"}) {
+            mockMvc.perform(post("/api/clientes")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(clienteCon("Camila", "Torres", correoInvalido))))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.fieldErrors[?(@.field=='correoElectronico')]",
+                            org.hamcrest.Matchers.hasSize(org.hamcrest.Matchers.greaterThan(0))));
+        }
+    }
+
+    /**
+     * Requisito opcional del enunciado: nombre y apellido no pueden tener menos de 2 caracteres.
+     */
+    @Test
+    void nombreOApellidoDeMenosDeDosCaracteres_deberiaRechazarse() throws Exception {
+        mockMvc.perform(post("/api/clientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clienteCon("A", "Torres", correoUnico()))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='nombres')]",
+                        org.hamcrest.Matchers.hasSize(1)));
+
+        mockMvc.perform(post("/api/clientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clienteCon("Camila", "T", correoUnico()))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors[?(@.field=='apellido')]",
+                        org.hamcrest.Matchers.hasSize(1)));
+    }
+
+    @Test
+    void correoOIdentificacionDuplicados_deberianRechazarse() throws Exception {
+        String correo = correoUnico();
+        String identificacion = numeroIdentificacionUnico();
+
+        Map<String, Object> original = Map.of(
+                "tipoIdentificacion", "CC", "numeroIdentificacion", identificacion,
+                "nombres", "Camila", "apellido", "Torres", "correoElectronico", correo,
+                "fechaNacimiento", LocalDate.now().minusYears(30).toString());
+        mockMvc.perform(post("/api/clientes").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(original)))
+                .andExpect(status().isCreated());
+
+        // Mismo correo, identificación distinta.
+        mockMvc.perform(post("/api/clientes").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(clienteCon("Otra", "Persona", correo))))
+                .andExpect(status().isUnprocessableEntity());
+
+        // Misma identificación, correo distinto.
+        Map<String, Object> mismaIdentificacion = Map.of(
+                "tipoIdentificacion", "CC", "numeroIdentificacion", identificacion,
+                "nombres", "Otra", "apellido", "Persona", "correoElectronico", correoUnico(),
+                "fechaNacimiento", LocalDate.now().minusYears(30).toString());
+        mockMvc.perform(post("/api/clientes").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(mismaIdentificacion)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
     @Test
     void identificadorMalFormado_deberiaResponder400YNo500() throws Exception {
         mockMvc.perform(get("/api/clientes/{id}", "no-es-un-uuid"))
@@ -218,6 +281,16 @@ class ReglasDeNegocioComponentTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         return objectMapper.readTree(body).get("id").asText();
+    }
+
+    private Map<String, Object> clienteCon(String nombres, String apellido, String correo) {
+        return Map.of(
+                "tipoIdentificacion", "CC",
+                "numeroIdentificacion", numeroIdentificacionUnico(),
+                "nombres", nombres,
+                "apellido", apellido,
+                "correoElectronico", correo,
+                "fechaNacimiento", LocalDate.now().minusYears(30).toString());
     }
 
     private String numeroIdentificacionUnico() {
