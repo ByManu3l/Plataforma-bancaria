@@ -1,5 +1,6 @@
 package com.bancaria.prueba.cuenta;
 
+import com.bancaria.prueba.cuenta.dto.ActualizarCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaResponse;
 
@@ -11,6 +12,8 @@ public interface CuentaService {
     CuentaResponse crear(CuentaRequest request);
 
     CuentaResponse cambiarEstado(UUID id, EstadoCuenta nuevoEstado);
+
+    CuentaResponse actualizar(UUID id, ActualizarCuentaRequest request);
 
     CuentaResponse obtener(UUID id);
 

@@ -1,5 +1,6 @@
 package com.bancaria.prueba.cuenta;
 
+import com.bancaria.prueba.cuenta.dto.ActualizarCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CambiarEstadoCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaResponse;
@@ -34,6 +35,13 @@ public class CuentaController {
     public ResponseEntity<CuentaResponse> cambiarEstado(@PathVariable UUID id,
                                                           @Valid @RequestBody CambiarEstadoCuentaRequest request) {
         return ResponseEntity.ok(cuentaService.cambiarEstado(id, request.estado()));
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Actualizar los atributos modificables de una cuenta (exención de GMF)")
+    public ResponseEntity<CuentaResponse> actualizar(@PathVariable UUID id,
+                                                      @Valid @RequestBody ActualizarCuentaRequest request) {
+        return ResponseEntity.ok(cuentaService.actualizar(id, request));
     }
 
     @GetMapping("/{id}")

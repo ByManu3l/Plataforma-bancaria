@@ -8,13 +8,18 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * Efecto de débito sobre una cuenta: retiro o lado emisor de una transferencia.
- * Las cuentas de ahorro no pueden quedar con saldo negativo; las cuentas
- * corrientes sí admiten sobregiro, ya que el requerimiento solo restringe el
- * saldo mínimo de las cuentas de ahorro.
+ * Efecto de débito sobre una cuenta: retiro, cobro del GMF o lado emisor de una
+ * transferencia. Las cuentas de ahorro no pueden quedar con saldo negativo; las
+ * cuentas corrientes sí admiten sobregiro, ya que el requerimiento solo restringe
+ * el saldo mínimo de las cuentas de ahorro.
  */
 @Component
 public class DebitoOperacion implements OperacionCuenta {
+
+    @Override
+    public TipoOperacion tipo() {
+        return TipoOperacion.DEBITO;
+    }
 
     @Override
     public void aplicar(Cuenta cuenta, BigDecimal valor) {

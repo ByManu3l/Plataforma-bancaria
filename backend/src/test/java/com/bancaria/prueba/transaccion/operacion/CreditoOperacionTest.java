@@ -14,6 +14,11 @@ class CreditoOperacionTest {
     private final CreditoOperacion creditoOperacion = new CreditoOperacion();
 
     @Test
+    void tipo_deberiaSerCredito() {
+        assertThat(creditoOperacion.tipo()).isEqualTo(TipoOperacion.CREDITO);
+    }
+
+    @Test
     void aplicar_deberiaIncrementarElSaldo() {
         Cuenta cuenta = Cuenta.builder()
                 .tipoCuenta(TipoCuenta.AHORROS)

@@ -13,6 +13,12 @@ public record CuentaResponse(
         String numeroCuenta,
         EstadoCuenta estado,
         BigDecimal saldo,
+        /**
+         * Saldo del que el titular puede disponer. Coincide con el saldo contable
+         * porque el alcance de la prueba no contempla retenciones ni embargos;
+         * se expone como campo propio para dejar explícita la distinción.
+         */
+        BigDecimal saldoDisponible,
         boolean exentaGmf,
         LocalDateTime fechaCreacion,
         LocalDateTime fechaModificacion,

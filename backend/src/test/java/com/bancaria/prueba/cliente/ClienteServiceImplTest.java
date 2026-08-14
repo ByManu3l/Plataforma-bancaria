@@ -103,14 +103,16 @@ class ClienteServiceImplTest {
     @Test
     void actualizar_deberiaActualizarCliente_cuandoExiste() {
         when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
-        when(clienteRepository.save(cliente)).thenReturn(cliente);
-        when(clienteMapper.toResponse(cliente)).thenReturn(respuestaDe(cliente));
+        when(clienteRepository.saveAndFlush(cliente)).thenReturn(cliente);
+        when(clienteMapper.toResponse(cliente)).thenAnswer(invocation -> respuestaDe(invocation.getArgument(0)));
 
         ClienteResponse response = clienteService.actualizar(clienteId, request);
 
         assertThat(response.id()).isEqualTo(clienteId);
         verify(clienteMapper).actualizarEntidad(request, cliente);
-        verify(clienteRepository).save(cliente);
+        // saveAndFlush (y no save) es lo que garantiza que @PreUpdate se ejecute
+        // antes de mapear la respuesta, para que viaje la fecha de modificación.
+        verify(clienteRepository).saveAndFlush(cliente);
     }
 
     @Test

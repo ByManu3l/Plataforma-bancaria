@@ -70,6 +70,16 @@ export default function CuentasPage() {
     }
   };
 
+  const handleCambiarExencionGmf = async (cuenta) => {
+    setError('');
+    try {
+      await api.patch(`/cuentas/${cuenta.id}`, { exentaGmf: !cuenta.exentaGmf });
+      await cargarCuentas(filtroClienteId);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'No se pudo actualizar la exención de GMF');
+    }
+  };
+
   const nombreCliente = (clienteId) => {
     const cliente = clientes.find((c) => c.id === clienteId);
     return cliente ? `${cliente.nombres} ${cliente.apellido}` : clienteId;
@@ -134,6 +144,7 @@ export default function CuentasPage() {
               <th>Cliente</th>
               <th>Estado</th>
               <th>Saldo</th>
+              <th>Saldo disponible</th>
               <th>Exenta GMF</th>
               <th>Cambiar estado</th>
             </tr>
@@ -146,7 +157,12 @@ export default function CuentasPage() {
                 <td>{cuenta.clienteNombreCompleto || nombreCliente(cuenta.clienteId)}</td>
                 <td>{cuenta.estado}</td>
                 <td>${Number(cuenta.saldo).toLocaleString('es-CO')}</td>
-                <td>{cuenta.exentaGmf ? 'Sí' : 'No'}</td>
+                <td>${Number(cuenta.saldoDisponible).toLocaleString('es-CO')}</td>
+                <td>
+                  <button type="button" className="secondary" onClick={() => handleCambiarExencionGmf(cuenta)}>
+                    {cuenta.exentaGmf ? 'Sí' : 'No'}
+                  </button>
+                </td>
                 <td className="actions">
                   <select
                     value={nuevoEstado[cuenta.id] || ''}
@@ -163,7 +179,7 @@ export default function CuentasPage() {
             ))}
             {cuentas.length === 0 && (
               <tr>
-                <td colSpan="7">No hay cuentas registradas todavía.</td>
+                <td colSpan="8">No hay cuentas registradas todavía.</td>
               </tr>
             )}
           </tbody>
