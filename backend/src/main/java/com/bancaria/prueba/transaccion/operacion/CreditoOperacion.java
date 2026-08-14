@@ -12,6 +12,11 @@ import java.math.BigDecimal;
 public class CreditoOperacion implements OperacionCuenta {
 
     @Override
+    public TipoOperacion tipo() {
+        return TipoOperacion.CREDITO;
+    }
+
+    @Override
     public void aplicar(Cuenta cuenta, BigDecimal valor) {
         cuenta.setSaldo(cuenta.getSaldo().add(valor));
     }

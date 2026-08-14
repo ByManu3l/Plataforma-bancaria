@@ -52,6 +52,16 @@ public class Cuenta {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
+    /**
+     * Control de concurrencia optimista. Evita la pérdida de actualizaciones
+     * (lost update) cuando dos transacciones leen el mismo saldo y lo modifican:
+     * la segunda en confirmar falla con OptimisticLockingFailureException en
+     * lugar de sobrescribir el saldo de la primera.
+     */
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     @PrePersist
     void alCrear() {
         this.fechaCreacion = LocalDateTime.now();

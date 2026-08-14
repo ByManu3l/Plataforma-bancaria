@@ -4,6 +4,7 @@ import com.bancaria.prueba.cliente.Cliente;
 import com.bancaria.prueba.cliente.ClienteRepository;
 import com.bancaria.prueba.common.exception.BusinessRuleException;
 import com.bancaria.prueba.common.exception.ResourceNotFoundException;
+import com.bancaria.prueba.cuenta.dto.ActualizarCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaResponse;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +47,32 @@ public class CuentaServiceImpl implements CuentaService {
     public CuentaResponse cambiarEstado(UUID id, EstadoCuenta nuevoEstado) {
         Cuenta cuenta = obtenerEntidad(id);
 
+        if (cuenta.getEstado() == EstadoCuenta.CANCELADA) {
+            throw new BusinessRuleException(
+                    "La cuenta " + cuenta.getNumeroCuenta() + " está cancelada; la cancelación es definitiva");
+        }
         if (nuevoEstado == EstadoCuenta.CANCELADA && cuenta.getSaldo().compareTo(BigDecimal.ZERO) != 0) {
             throw new BusinessRuleException("Solo se pueden cancelar cuentas con saldo igual a $0");
         }
 
         cuenta.setEstado(nuevoEstado);
-        Cuenta actualizada = cuentaRepository.save(cuenta);
+        // saveAndFlush fuerza el UPDATE dentro de la transacción para que la
+        // devolución de @PreUpdate (fechaModificacion) quede reflejada en la respuesta.
+        Cuenta actualizada = cuentaRepository.saveAndFlush(cuenta);
+        return cuentaMapper.toResponse(actualizada);
+    }
+
+    @Override
+    public CuentaResponse actualizar(UUID id, ActualizarCuentaRequest request) {
+        Cuenta cuenta = obtenerEntidad(id);
+
+        if (cuenta.getEstado() == EstadoCuenta.CANCELADA) {
+            throw new BusinessRuleException(
+                    "No es posible modificar la cuenta " + cuenta.getNumeroCuenta() + " porque está cancelada");
+        }
+
+        cuenta.setExentaGmf(request.exentaGmf());
+        Cuenta actualizada = cuentaRepository.saveAndFlush(cuenta);
         return cuentaMapper.toResponse(actualizada);
     }
 

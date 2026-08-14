@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,5 +51,11 @@ public class TransaccionController {
     @Operation(summary = "Consultar el estado de cuenta: saldo actual e historial de movimientos")
     public ResponseEntity<EstadoCuentaResponse> obtenerEstadoCuenta(@PathVariable UUID cuentaId) {
         return ResponseEntity.ok(transaccionService.obtenerEstadoCuenta(cuentaId));
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar movimientos, opcionalmente filtrados por cuenta")
+    public ResponseEntity<List<MovimientoResponse>> listarMovimientos(@RequestParam(required = false) UUID cuentaId) {
+        return ResponseEntity.ok(transaccionService.listarMovimientos(cuentaId));
     }
 }
