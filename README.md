@@ -5,7 +5,7 @@ clientes, productos financieros (cuentas de ahorro y corriente) y las
 transacciones (consignaciones, retiros y transferencias) sobre esos
 productos. Incluye un frontend para operar la API desde el navegador.
 
-**Estado:** 82 pruebas automatizadas en verde, 93% de cobertura de líneas
+**Estado:** 85 pruebas automatizadas en verde, 93% de cobertura de líneas
 verificada en cada construcción.
 
 ## Índice
@@ -259,7 +259,7 @@ cd backend
 ./mvnw verify      # ejecuta las pruebas y valida el umbral de cobertura
 ```
 
-**82 pruebas**, todas en verde:
+**85 pruebas**, todas en verde:
 
 - **Unitarias** (JUnit 5 + Mockito): capa `Service` de los tres módulos y
   clases de dominio (`NumeroCuentaGenerator`, `MinAgeValidator`,
