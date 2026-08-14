@@ -99,7 +99,7 @@ class TransaccionControllerTest {
     @Test
     void obtenerEstadoCuenta_deberiaRetornar200_conSaldoYMovimientos() throws Exception {
         CuentaResponse cuenta = new CuentaResponse(cuentaId, TipoCuenta.AHORROS, "5300000001", EstadoCuenta.ACTIVA,
-                new BigDecimal("100.00"), true, null, null, UUID.randomUUID(), "Laura Gómez");
+                new BigDecimal("100.00"), new BigDecimal("100.00"), true, null, null, UUID.randomUUID(), "Laura Gómez");
         when(transaccionService.obtenerEstadoCuenta(eq(cuentaId)))
                 .thenReturn(new EstadoCuentaResponse(cuenta, List.of()));
 

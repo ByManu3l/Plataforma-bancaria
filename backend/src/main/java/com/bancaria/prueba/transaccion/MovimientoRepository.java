@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface MovimientoRepository extends JpaRepository<Movimiento, UUID> {
 
     List<Movimiento> findByCuentaIdOrderByFechaDesc(UUID cuentaId);
+
+    List<Movimiento> findAllByOrderByFechaDesc();
 }

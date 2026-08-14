@@ -33,6 +33,10 @@ springdoc:
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  gmf:
+    # Gravamen a los Movimientos Financieros ("4x1000"). Es un parámetro
+    # tributario, por eso se configura en vez de incrustarlo en el código.
+    tarifa: ${GMF_TARIFA:0.004}
 
 logging:
   level:

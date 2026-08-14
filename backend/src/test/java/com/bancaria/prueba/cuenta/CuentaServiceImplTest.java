@@ -4,6 +4,7 @@ import com.bancaria.prueba.cliente.Cliente;
 import com.bancaria.prueba.cliente.ClienteRepository;
 import com.bancaria.prueba.common.exception.BusinessRuleException;
 import com.bancaria.prueba.common.exception.ResourceNotFoundException;
+import com.bancaria.prueba.cuenta.dto.ActualizarCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,8 +82,8 @@ class CuentaServiceImplTest {
     void cambiarEstado_deberiaCancelar_cuandoSaldoEsCero() {
         Cuenta cuenta = cuentaConSaldo(BigDecimal.ZERO);
         when(cuentaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
-        when(cuentaRepository.save(cuenta)).thenReturn(cuenta);
-        when(cuentaMapper.toResponse(cuenta)).thenReturn(respuestaDe(cuenta));
+        when(cuentaRepository.saveAndFlush(cuenta)).thenReturn(cuenta);
+        when(cuentaMapper.toResponse(cuenta)).thenAnswer(invocation -> respuestaDe(invocation.getArgument(0)));
 
         CuentaResponse response = cuentaService.cambiarEstado(cuentaId, EstadoCuenta.CANCELADA);
 
@@ -105,12 +106,47 @@ class CuentaServiceImplTest {
     void cambiarEstado_deberiaInactivar_sinImportarElSaldo() {
         Cuenta cuenta = cuentaConSaldo(new BigDecimal("1000.00"));
         when(cuentaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
-        when(cuentaRepository.save(cuenta)).thenReturn(cuenta);
-        when(cuentaMapper.toResponse(cuenta)).thenReturn(respuestaDe(cuenta));
+        when(cuentaRepository.saveAndFlush(cuenta)).thenReturn(cuenta);
+        when(cuentaMapper.toResponse(cuenta)).thenAnswer(invocation -> respuestaDe(invocation.getArgument(0)));
 
         CuentaResponse response = cuentaService.cambiarEstado(cuentaId, EstadoCuenta.INACTIVA);
 
         assertThat(response.estado()).isEqualTo(EstadoCuenta.INACTIVA);
+    }
+
+    @Test
+    void cambiarEstado_deberiaLanzarExcepcion_cuandoLaCuentaYaEstaCancelada() {
+        Cuenta cuenta = cuentaConSaldo(BigDecimal.ZERO);
+        cuenta.setEstado(EstadoCuenta.CANCELADA);
+        when(cuentaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+
+        assertThatThrownBy(() -> cuentaService.cambiarEstado(cuentaId, EstadoCuenta.ACTIVA))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("cancelación es definitiva");
+
+        verify(cuentaRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void actualizar_deberiaCambiarLaExencionDeGmf() {
+        Cuenta cuenta = cuentaConSaldo(BigDecimal.ZERO);
+        when(cuentaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+        when(cuentaRepository.saveAndFlush(cuenta)).thenReturn(cuenta);
+        when(cuentaMapper.toResponse(cuenta)).thenAnswer(invocation -> respuestaDe(invocation.getArgument(0)));
+
+        CuentaResponse response = cuentaService.actualizar(cuentaId, new ActualizarCuentaRequest(false));
+
+        assertThat(response.exentaGmf()).isFalse();
+    }
+
+    @Test
+    void actualizar_deberiaLanzarExcepcion_cuandoLaCuentaEstaCancelada() {
+        Cuenta cuenta = cuentaConSaldo(BigDecimal.ZERO);
+        cuenta.setEstado(EstadoCuenta.CANCELADA);
+        when(cuentaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+
+        assertThatThrownBy(() -> cuentaService.actualizar(cuentaId, new ActualizarCuentaRequest(false)))
+                .isInstanceOf(BusinessRuleException.class);
     }
 
     @Test
@@ -150,6 +186,7 @@ class CuentaServiceImplTest {
                 cuenta.getTipoCuenta(),
                 cuenta.getNumeroCuenta(),
                 cuenta.getEstado(),
+                cuenta.getSaldo(),
                 cuenta.getSaldo(),
                 cuenta.isExentaGmf(),
                 cuenta.getFechaCreacion(),

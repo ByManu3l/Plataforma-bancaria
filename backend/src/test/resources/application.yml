@@ -17,3 +17,5 @@ spring:
 app:
   cors:
     allowed-origins: http://localhost:5173
+  gmf:
+    tarifa: 0.004

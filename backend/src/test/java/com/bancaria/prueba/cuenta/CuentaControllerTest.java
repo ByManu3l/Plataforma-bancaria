@@ -112,7 +112,7 @@ class CuentaControllerTest {
     }
 
     private CuentaResponse respuesta(EstadoCuenta estado, BigDecimal saldo) {
-        return new CuentaResponse(cuentaId, TipoCuenta.AHORROS, "5300000001", estado, saldo, true,
+        return new CuentaResponse(cuentaId, TipoCuenta.AHORROS, "5300000001", estado, saldo, saldo, true,
                 null, null, clienteId, "Laura Gómez");
     }
 }

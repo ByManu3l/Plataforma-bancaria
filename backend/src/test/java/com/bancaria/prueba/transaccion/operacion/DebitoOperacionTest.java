@@ -16,6 +16,11 @@ class DebitoOperacionTest {
     private final DebitoOperacion debitoOperacion = new DebitoOperacion();
 
     @Test
+    void tipo_deberiaSerDebito() {
+        assertThat(debitoOperacion.tipo()).isEqualTo(TipoOperacion.DEBITO);
+    }
+
+    @Test
     void aplicar_deberiaDisminuirElSaldo() {
         Cuenta cuenta = cuenta(TipoCuenta.CORRIENTE, "100.00");
 

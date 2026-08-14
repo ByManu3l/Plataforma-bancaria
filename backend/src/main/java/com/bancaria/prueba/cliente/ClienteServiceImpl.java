@@ -52,7 +52,10 @@ public class ClienteServiceImpl implements ClienteService {
         }
 
         clienteMapper.actualizarEntidad(request, cliente);
-        Cliente actualizado = clienteRepository.save(cliente);
+        // saveAndFlush fuerza el UPDATE dentro de la transacción: @PreUpdate solo se
+        // ejecuta al hacer flush, así que sin esto la fecha de modificación se
+        // persistiría bien pero la respuesta viajaría con el valor anterior.
+        Cliente actualizado = clienteRepository.saveAndFlush(cliente);
         return clienteMapper.toResponse(actualizado);
     }
 
