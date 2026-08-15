@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { api, ApiError } from '../api/client';
 import ErrorBanner from '../components/ErrorBanner';
 
-const TIPOS_IDENTIFICACION = ['CC', 'CE', 'TI', 'PASAPORTE'];
+// Sin tarjeta de identidad: es el documento de los menores de edad y el
+// backend exige que todo cliente sea mayor de edad.
+const TIPOS_IDENTIFICACION = ['CC', 'CE', 'PASAPORTE'];
 
 const FORM_VACIO = {
   tipoIdentificacion: 'CC',
