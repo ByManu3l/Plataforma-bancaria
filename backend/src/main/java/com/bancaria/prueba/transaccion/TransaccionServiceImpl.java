@@ -38,11 +38,10 @@ public class TransaccionServiceImpl implements TransaccionService {
         Cuenta cuenta = obtenerCuentaActiva(request.cuentaId());
 
         operaciones.para(TipoOperacion.CREDITO).aplicar(cuenta, request.valor());
+        Movimiento movimiento = registrarMovimiento(cuenta, TipoMovimiento.CONSIGNACION,
+                request.valor(), null, "Consignación en la cuenta " + cuenta.getNumeroCuenta());
+
         cuentaRepository.saveAndFlush(cuenta);
-
-        Movimiento movimiento = registrarMovimiento(
-                cuenta, TipoMovimiento.CONSIGNACION, request.valor(), null, null);
-
         return movimientoMapper.toResponse(movimiento);
     }
 
@@ -51,10 +50,10 @@ public class TransaccionServiceImpl implements TransaccionService {
         Cuenta cuenta = obtenerCuentaActiva(request.cuentaId());
 
         operaciones.para(TipoOperacion.DEBITO).aplicar(cuenta, request.valor());
-        Movimiento retiro = registrarMovimiento(
-                cuenta, TipoMovimiento.RETIRO, request.valor(), null, null);
+        Movimiento retiro = registrarMovimiento(cuenta, TipoMovimiento.RETIRO,
+                request.valor(), null, "Retiro de la cuenta " + cuenta.getNumeroCuenta());
 
-        cobrarGmf(cuenta, request.valor(), "Retiro por " + request.valor());
+        cobrarGmf(cuenta, request.valor(), "retiro");
 
         cuentaRepository.saveAndFlush(cuenta);
         return movimientoMapper.toResponse(retiro);
@@ -77,7 +76,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         registrarMovimiento(destino, TipoMovimiento.TRANSFERENCIA_RECIBIDA,
                 request.valor(), origen, "Transferencia recibida de la cuenta " + origen.getNumeroCuenta());
 
-        cobrarGmf(origen, request.valor(), "Transferencia a la cuenta " + destino.getNumeroCuenta());
+        cobrarGmf(origen, request.valor(), "transferencia a la cuenta " + destino.getNumeroCuenta());
 
         cuentaRepository.saveAndFlush(origen);
         cuentaRepository.saveAndFlush(destino);
@@ -118,7 +117,7 @@ public class TransaccionServiceImpl implements TransaccionService {
             return;
         }
         operaciones.para(TipoOperacion.DEBITO).aplicar(cuenta, gmf);
-        registrarMovimiento(cuenta, TipoMovimiento.GMF, gmf, null, "GMF (4x1000) — " + concepto);
+        registrarMovimiento(cuenta, TipoMovimiento.GMF, gmf, null, "GMF (4x1000) sobre " + concepto);
     }
 
     /**
