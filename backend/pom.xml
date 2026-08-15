@@ -20,6 +20,16 @@
 
     <properties>
         <java.version>17</java.version>
+        <!-- Spring Boot 3.3 fija versiones de estas tres herramientas anteriores
+             al soporte de JDK 24+, y en una máquina con un JDK reciente el
+             proyecto no compila (Lombok) ni ejecuta las pruebas (Mockito y su
+             motor Byte Buddy). Se elevan para que compile y pase las pruebas en
+             cualquier JDK moderno; el bytecode generado sigue siendo Java 17 y
+             las tres son de ámbito compilación o pruebas, así que no cambian el
+             comportamiento en producción. -->
+        <lombok.version>1.18.42</lombok.version>
+        <mockito.version>5.20.0</mockito.version>
+        <byte-buddy.version>1.17.8</byte-buddy.version>
         <mapstruct.version>1.6.2</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <springdoc.version>2.6.0</springdoc.version>

@@ -1,6 +1,5 @@
 package com.bancaria.prueba.cliente;
 
-import com.bancaria.prueba.cuenta.Cuenta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +9,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -52,9 +49,10 @@ public class Cliente {
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "cliente")
-    private List<Cuenta> cuentas = new ArrayList<>();
+    // No se mapea la colección de cuentas del cliente: la relación se navega
+    // siempre desde la cuenta hacia su titular, y las consultas por cliente se
+    // resuelven en CuentaRepository. Un @OneToMany aquí sería una relación sin
+    // uso que además invita a cargar todas las cuentas sin necesitarlas.
 
     @PrePersist
     void alCrear() {

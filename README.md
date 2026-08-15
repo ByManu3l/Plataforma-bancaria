@@ -239,7 +239,7 @@ ejemplo automáticamente al arrancar.
 ### En local, sin Docker
 
 El proyecto incluye el **Maven wrapper**, así que no hace falta tener Maven
-instalado (sí un JDK 17+):
+instalado; sí un **JDK 17 o superior**:
 
 ```bash
 cd backend
@@ -251,6 +251,15 @@ npm install && npm run dev
 
 Las credenciales y la URL de la base de datos se configuran por variables
 de entorno (ver `.env.example` y `backend/src/main/resources/application.yml`).
+
+> **Sobre la versión del JDK.** El proyecto compila a bytecode de Java 17,
+> que es su versión objetivo, pero se construye y se prueba correctamente
+> con cualquier JDK desde el 17 en adelante. Spring Boot 3.3 fija versiones
+> de Lombok, Mockito y Byte Buddy anteriores al soporte de los JDK más
+> recientes, así que el `pom.xml` las eleva de forma explícita: sin ese
+> ajuste, quien tuviera instalado un JDK 24 o posterior no podría ni
+> compilar el proyecto. Las tres son dependencias de compilación o de
+> pruebas, de modo que no alteran el comportamiento en producción.
 
 ## Tests
 
@@ -344,6 +353,15 @@ Decisiones tomadas deliberadamente, con su justificación:
   deterministas como `CURRENT_DATE` en un `CHECK`, de modo que la
   alternativa sería un disparador, con un costo de mantenimiento que no se
   justifica frente a la validación declarativa ya existente.
+- **No se admite la tarjeta de identidad como documento.** En Colombia la
+  expide el registro civil para personas de 7 a 17 años, así que sería
+  incompatible con la regla que exige que todo cliente sea mayor de edad:
+  habría quedado en el modelo un valor imposible de usar.
+- **El cliente no expone la colección de sus cuentas.** La relación se
+  navega siempre desde la cuenta hacia su titular, y las consultas por
+  cliente se resuelven en `CuentaRepository`. Un `@OneToMany` en `Cliente`
+  habría sido una relación sin uso que además invita a cargar todas las
+  cuentas cuando no hacen falta.
 - **No se implementó autenticación.** El enunciado no la pide y añadirla
   sin un modelo de usuarios y roles definido sería una decisión
   arbitraria. En producción, la vía natural sería Spring Security con JWT
