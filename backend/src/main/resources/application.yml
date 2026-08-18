@@ -20,7 +20,9 @@ spring:
     baseline-on-migrate: true
 
 server:
-  port: ${SERVER_PORT:8080}
+  # PORT lo inyectan las plataformas de despliegue (Render, Railway, Heroku,
+  # Cloud Run); SERVER_PORT queda como override manual y 8080 como valor local.
+  port: ${PORT:${SERVER_PORT:8080}}
   error:
     include-message: always
 
