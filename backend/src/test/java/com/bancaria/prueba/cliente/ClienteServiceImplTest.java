@@ -163,6 +163,42 @@ class ClienteServiceImplTest {
         assertThat(respuesta).hasSize(1);
     }
 
+    @Test
+    void actualizar_deberiaLanzarExcepcion_cuandoElNuevoNumeroDeIdentificacionYaEsDeOtroCliente() {
+        ClienteRequest otro = new ClienteRequest(TipoIdentificacion.CC, "9999999999", "Ana", "Ruiz",
+                cliente.getCorreoElectronico(), request.fechaNacimiento());
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
+        when(clienteRepository.existsByNumeroIdentificacion("9999999999")).thenReturn(true);
+
+        assertThatThrownBy(() -> clienteService.actualizar(clienteId, otro))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("9999999999");
+
+        verify(clienteRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void actualizar_deberiaLanzarExcepcion_cuandoElNuevoCorreoYaEsDeOtroCliente() {
+        ClienteRequest otro = new ClienteRequest(TipoIdentificacion.CC, cliente.getNumeroIdentificacion(),
+                "Ana", "Ruiz", "ocupado@example.com", request.fechaNacimiento());
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
+        when(clienteRepository.existsByCorreoElectronico("ocupado@example.com")).thenReturn(true);
+
+        assertThatThrownBy(() -> clienteService.actualizar(clienteId, otro))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining("ocupado@example.com");
+
+        verify(clienteRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void obtener_deberiaDevolverElCliente_cuandoExiste() {
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
+        when(clienteMapper.toResponse(cliente)).thenReturn(respuestaDe(cliente));
+
+        assertThat(clienteService.obtener(clienteId).id()).isEqualTo(clienteId);
+    }
+
     private ClienteResponse respuestaDe(Cliente cliente) {
         return new ClienteResponse(
                 cliente.getId(),
