@@ -2,6 +2,7 @@ package com.bancaria.prueba.cuenta;
 
 import com.bancaria.prueba.common.exception.BusinessRuleException;
 import com.bancaria.prueba.common.exception.ResourceNotFoundException;
+import com.bancaria.prueba.cuenta.dto.ActualizarCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CambiarEstadoCuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaRequest;
 import com.bancaria.prueba.cuenta.dto.CuentaResponse;
@@ -109,6 +110,27 @@ class CuentaControllerTest {
         mockMvc.perform(get("/api/cuentas").param("clienteId", clienteId.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)));
+    }
+
+    @Test
+    void listar_sinClienteId_deberiaDevolverTodasLasCuentas() throws Exception {
+        when(cuentaService.listar()).thenReturn(List.of(respuesta(EstadoCuenta.ACTIVA, BigDecimal.ZERO)));
+
+        mockMvc.perform(get("/api/cuentas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)));
+    }
+
+    @Test
+    void actualizar_deberiaRetornar200_cuandoSeCambiaLaExencionDeGmf() throws Exception {
+        ActualizarCuentaRequest request = new ActualizarCuentaRequest(false);
+        when(cuentaService.actualizar(eq(cuentaId), any(ActualizarCuentaRequest.class)))
+                .thenReturn(respuesta(EstadoCuenta.ACTIVA, BigDecimal.ZERO));
+
+        mockMvc.perform(patch("/api/cuentas/{id}", cuentaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
     }
 
     private CuentaResponse respuesta(EstadoCuenta estado, BigDecimal saldo) {

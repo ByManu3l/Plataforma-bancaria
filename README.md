@@ -5,7 +5,7 @@ clientes, productos financieros (cuentas de ahorro y corriente) y las
 transacciones (consignaciones, retiros y transferencias) sobre esos
 productos. Incluye un frontend para operar la API desde el navegador.
 
-**Estado:** 85 pruebas automatizadas en verde, 93% de cobertura de líneas
+**Estado:** 90 pruebas automatizadas en verde, 94,8% de cobertura de líneas
 verificada en cada construcción.
 
 ## Índice
@@ -268,7 +268,7 @@ cd backend
 ./mvnw verify      # ejecuta las pruebas y valida el umbral de cobertura
 ```
 
-**85 pruebas**, todas en verde:
+**90 pruebas**, todas en verde:
 
 - **Unitarias** (JUnit 5 + Mockito): capa `Service` de los tres módulos y
   clases de dominio (`NumeroCuentaGenerator`, `MinAgeValidator`,
@@ -284,8 +284,8 @@ cd backend
   el control de concurrencia optimista.
 
 La cobertura se mide con **JaCoCo** y es **exigible**: `verify` falla si
-baja del 85% de líneas o del 70% de ramas. Cobertura actual: **93,8% de
-líneas y 78,6% de ramas**; el reporte HTML queda en
+baja del 85% de líneas o del 70% de ramas. Cobertura actual: **94,8% de
+líneas y 82,1% de ramas**, con las capas Service (97,6%) y Controller (100%) que exige el enunciado por encima del resto; el reporte HTML queda en
 `backend/target/site/jacoco/index.html`.
 
 Cada push a `main` o `develop` ejecuta en **GitHub Actions**
