@@ -1,5 +1,11 @@
 # Prueba Técnica – Plataforma Bancaria
 
+[![CI](https://github.com/ByManu3l/prueba-tecnica-bancaria/actions/workflows/ci.yml/badge.svg)](https://github.com/ByManu3l/prueba-tecnica-bancaria/actions/workflows/ci.yml)
+![Java 17](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot 3.3](https://img.shields.io/badge/Spring_Boot-3.3-6DB33F?logo=springboot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Cobertura 94,8 %](https://img.shields.io/badge/cobertura-94%2C8%25-brightgreen)
+
 API REST para que los trabajadores de una entidad financiera administren
 clientes, productos financieros (cuentas de ahorro y corriente) y las
 transacciones (consignaciones, retiros y transferencias) sobre esos
