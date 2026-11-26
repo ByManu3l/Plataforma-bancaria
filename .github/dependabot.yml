@@ -4,6 +4,10 @@ updates:
     directory: /backend
     schedule:
       interval: weekly
+    # Spring Boot 4 y springdoc 3 exigen una migración: no se proponen solas.
+    ignore:
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
     groups:
       dependencias-menores:
         update-types: [minor, patch]
